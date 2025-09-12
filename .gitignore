@@ -20,3 +20,7 @@ Thumbs.db
 # Build outputs
 dist/
 build/
+
+# Downloaded media cache
+media/*
+!media/.gitkeep
