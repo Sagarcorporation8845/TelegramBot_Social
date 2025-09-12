@@ -28,9 +28,9 @@ const fs = require('fs').promises;
 const path = require('path');
 
 // --- ⚠️ PASTE YOUR SECRETS HERE ---
-const botToken = '7917407279:AAGpd3eMiaeEUxvemlvJDRskMX5TLVhum3w';
-const apiId = 26262293; // Must be a number, not a string (e.g., 1234567)
-const apiHash = '73c279d5639e82e8c7b76733d6ea676e';
+const botToken = 'bot tokem';
+const apiId = 'id here'; // Must be a number, not a string (e.g., 1234567)
+const apiHash = 'gash here';
 const adminChatId = 5413684404; // Admin chat ID for panel access
 // ------------------------------------
 
